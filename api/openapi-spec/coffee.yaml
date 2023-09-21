@@ -1,0 +1,122 @@
+openapi: "3.1.0"
+info:
+  version: 1.0.0
+  title: Coffee API
+  description: API for coffee-related information
+servers:
+  - url: https://api.example.com/v1
+tags:
+  - name: coffee-drinks
+    description: Coffee drinks operations
+paths:
+  /coffee-drinks:
+    get:
+      tags:
+        - coffee-drinks
+      summary: Get coffee drinks
+      operationId: GetCoffeeDrinks
+      parameters:
+        - name: temperatureStyle
+          in: query
+          description: Hot or cold coffee drinks
+          required: false
+          schema:
+            $ref: "#/components/schemas/TemperatureStyle"
+      responses:
+        "200":
+          description: Return list of coffee drinks
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CoffeeDrinks"
+        "400":
+          description: Bad request for temperatureStyle query parameter
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: string
+                    example: "unable to bind request data"
+                  - type: string
+                    example: "invalid value for parameter temperatureStyle"
+        "500":
+          description: Internal server error for database retrieval operations
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: string
+                    example: "unable to get HOT coffee drinks"
+                  - type: string
+                    example: "unable to get coffee drinks"
+    post:
+      tags:
+        - coffee-drinks
+      summary: Create a coffee drink
+      operationId: CreateCoffeeDrink
+      requestBody:
+        description: Coffee drink to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CoffeeDrink"
+      responses:
+        "201":
+          description: Return created coffee drink
+          content:
+            application/json:
+              schema:
+                type: string
+                format: uuid
+              example: "123e4567-e89b-12d3-a456-426614174000"
+        "400":
+          description: Bad request for coffee drink request body
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: string
+                    example: "unable to bind request data"
+                  - type: string
+                    example: "invalid coffee drink"
+        "500":
+          description: Internal server error for database creation operations
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  type: string
+                  example: "unable to create coffee drink"
+
+components:
+  schemas:
+    CoffeeDrink:
+      required:
+        - id
+        - name
+        - temperatureStyle
+        - description
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        name:
+          type: string
+          example: "Espresso"
+        temperatureStyle:
+          $ref: "#/components/schemas/TemperatureStyle"
+        origin:
+          type: string
+          example: "Italy"
+        description:
+          type: string
+          example: "A coffee-brewing method of Italian origin, in which a small amount of nearly boiling water (about 90 °C or 190 °F) is forced under 9–10 bars (900–1,000 kPa; 130–150 psi) of pressure through finely-ground coffee beans."
+    CoffeeDrinks:
+      type: array
+      items:
+        $ref: "#/components/schemas/CoffeeDrink"
+    TemperatureStyle:
+      type: string
+      enum: ["HOT", "COLD"]
