@@ -34,7 +34,7 @@ type PostgresDatabase struct {
 }
 
 func NewPostgresDatabase() (*PostgresDatabase, error) {
-	err := godotenv.Load(".env.local")
+	err := godotenv.Load(".env")
 	if err != nil {
 		log.Fatal().Msgf("unable to load .env file: %v", err)
 	}
